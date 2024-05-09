@@ -1,5 +1,14 @@
 @import "./constants.css";
 
+.html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .App {
-  text-align: center;
+  display: grid;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
 }

@@ -9,3 +9,9 @@
     --tile-size: 50px;
   }
 }
+
+@media all and (min-width: 1440px) {
+  :root {
+    --tile-size: 125px;
+  }
+}
