@@ -1,0 +1,11 @@
+:root {
+  --tile-size: 100px;
+  --light-tile: #ebecd0;
+  --dark-tile: #779556;
+}
+
+@media all and (max-width: 450px) {
+  :root {
+    --tile-size: 50px;
+  }
+}
