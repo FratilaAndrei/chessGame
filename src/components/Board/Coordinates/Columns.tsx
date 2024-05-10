@@ -1,16 +1,16 @@
 import { FC } from "react";
+import { getCharacter } from "../../../helper";
 import "./Columns.css";
 
 interface Props {
-  columns: string[];
+  columns: number[];
 }
 
 const Columns: FC<Props> = ({ columns }) => {
-  console.log(columns);
   return (
     <div className="columns">
-      {columns.map((column: string) => (
-        <span key={column}>{column}</span>
+      {columns.map((column: number) => (
+        <span key={column}>{getCharacter(column)}</span>
       ))}
     </div>
   );

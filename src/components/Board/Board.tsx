@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { getCharacter } from "../../helper";
 import "./Board.css";
 import Columns from "./Coordinates/Columns";
 import Ranks from "./Coordinates/Ranks";
+import Pieces from "./Pieces/Pieces";
 
 const Board = () => {
   const [dropdownDisplay, setDropdownDisplay] = useState(false);
@@ -13,14 +13,14 @@ const Board = () => {
 
   const getTileColor = (rowIndex: number, columnIndex: number) => {
     let tile = "tile ";
-    tile += (rowIndex + columnIndex) % 2 === 0 ? "tile--light" : "tile--dark";
+    tile += (rowIndex + columnIndex) % 2 === 0 ? "tile--dark" : "tile--light";
     return tile;
   };
 
   const getTileColorV2 = (rowIndex: number, columnIndex: number) => {
     return (rowIndex + columnIndex) % 2 === 0
-      ? "tile--lightV2"
-      : "tile--darkV2";
+      ? "tile--darkV2"
+      : "tile--lightV2";
   };
 
   const [boardSkin, setBoardSkin] = useState(() => getTileColor);
@@ -38,7 +38,7 @@ const Board = () => {
 
   const columns = Array(8)
     .fill(0)
-    .map((column, columnIndex) => getCharacter(columnIndex));
+    .map((column, columnIndex) => columnIndex + 1);
 
   return (
     <div className="board">
@@ -49,11 +49,12 @@ const Board = () => {
             columns.map((column, columnIndex) => (
               <div
                 key={`${rankIndex} - ${columnIndex}`}
-                className={boardSkin(rankIndex, columnIndex)}
+                className={boardSkin(9 - rankIndex, columnIndex)}
               ></div>
             ))
           )}
         </div>
+        <Pieces />
         <Columns columns={columns} />
       </div>
       <div className="skin-dropdown">
