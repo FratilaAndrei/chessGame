@@ -1,43 +1,73 @@
+import { useRef, useState } from "react";
+import { copyPosition, createPosition } from "../../../helper";
 import Piece from "./Piece";
 
 const Pieces = () => {
-  const position = Array(8)
-    .fill("")
-    .map(() => new Array(8).fill(""));
+  const ref = useRef<HTMLDivElement>(null);
 
-  for (let i = 0; i < 8; i++) {
-    position[i][6] = "black-pawn";
-    position[i][1] = "white-pawn";
-  }
+  const [currentPosition, setCurrentPosition] = useState(createPosition());
 
-  position[0][0] = "white-rook";
-  position[1][0] = "white-horse";
-  position[2][0] = "white-bishop";
-  position[3][0] = "white-queen";
-  position[4][0] = "white-king";
-  position[5][0] = "white-bishop";
-  position[6][0] = "white-horse";
-  position[7][0] = "white-rook";
+  const calculateCoords = (e: any) => {
+    const refCurrent = ref.current;
+    if (!refCurrent) return { x: 0, y: 0 }; // Return default values or handle the null case
 
-  position[0][7] = "black-rook";
-  position[1][7] = "black-horse";
-  position[2][7] = "black-bishop";
-  position[3][7] = "black-queen";
-  position[4][7] = "black-king";
-  position[5][7] = "black-bishop";
-  position[6][7] = "black-horse";
-  position[7][7] = "black-rook";
+    const { width, left, top } = refCurrent.getBoundingClientRect();
+    const size = width / 8;
+    const y = Math.floor((e.clientX - left) / size);
+    const x = 7 - Math.floor((e.clientY - top) / size);
+    return { x, y };
+  };
+
+  const onDrop = (e: any) => {
+    const newPosition = copyPosition(currentPosition);
+    const { x, y } = calculateCoords(e);
+
+    // Debugging statements
+    console.log("Coordinates (x, y):", x, y);
+
+    if (x < 0 || x >= 8 || y < 0 || y >= 8) {
+      console.error("Invalid coordinates (x, y):", x, y);
+      return;
+    }
+
+    const [piece, rankStr, columnStr] = e.dataTransfer
+      .getData("text")
+      .split(",");
+    const column = parseInt(columnStr);
+    const rank = parseInt(rankStr);
+    console.log("Piece:", piece);
+    console.log("Rank:", rank);
+    console.log("Column:", column);
+
+    if (!newPosition[x]) {
+      console.error("Row is undefined:", x);
+      return;
+    }
+
+    console.log("Before updating newPosition:", JSON.stringify(newPosition));
+
+    newPosition[rank][column] = "";
+    newPosition[x][y] = piece;
+
+    console.log("After updating newPosition:", JSON.stringify(newPosition));
+
+    setCurrentPosition(newPosition);
+  };
+
+  const onDragOver = (e: any) => {
+    e.preventDefault();
+  };
 
   return (
-    <div className="pieces">
-      {position.map((r, rank) =>
+    <div onDrop={onDrop} onDragOver={onDragOver} className="pieces" ref={ref}>
+      {currentPosition.map((r, rank) =>
         r.map((c, column) =>
-          position[rank][column] ? (
+          currentPosition[rank][column] ? (
             <Piece
               key={rank + "-" + column}
               rank={rank}
               column={column}
-              piece={position[rank][column]}
+              piece={currentPosition[rank][column]}
             />
           ) : null
         )

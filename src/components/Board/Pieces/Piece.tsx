@@ -16,8 +16,21 @@ interface Props {
 }
 
 const Piece: FC<Props> = ({ rank, column, piece }) => {
+  const onDragStart = (e: any) => {
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", `${piece}, ${rank}, ${column}`);
+    setTimeout(() => {
+      e.target.style.display = "none";
+    }, 0);
+    // Using Timeout because otherwise the moment i grab de piece it becomes instantly invisible
+  };
+
   return (
-    <div className={`piece ${piece} p-${rank}${column}`}>
+    <div
+      className={`piece ${piece} p-${rank}${column}`}
+      draggable={true}
+      onDragStart={onDragStart}
+    >
       {piece === "white-rook" && <FaChessRook className="white-piece" />}
       {piece === "black-rook" && <FaChessRook className="black-piece" />}
       {piece === "black-pawn" && <FaChessPawn className="black-piece" />}
