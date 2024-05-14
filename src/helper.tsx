@@ -35,7 +35,7 @@ export const createPosition = () => {
   return position;
 };
 
-export const copyPosition = (position: any) => {
+export const copyPosition = (position: [][]) => {
   const newPosition = Array(8)
     .fill("")
     .map(() => new Array(8).fill(""));

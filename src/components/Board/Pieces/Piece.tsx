@@ -7,6 +7,9 @@ import {
   FaChessRook,
 } from "react-icons/fa";
 import { GiChessQueen } from "react-icons/gi";
+import arbiter from "../../../arbiter/arbiter";
+import { useAppContext } from "../../../contexts/Context";
+import { generateCandidateMoves } from "../../../reducer/actions/move";
 import "./Pieces.css";
 
 interface Props {
@@ -16,6 +19,10 @@ interface Props {
 }
 
 const Piece: FC<Props> = ({ rank, column, piece }) => {
+  const { appState, dispatch } = useAppContext() as any;
+
+  const { turn, position: currentPosition } = appState;
+
   const onDragStart = (e: any) => {
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", `${piece}, ${rank}, ${column}`);
@@ -23,6 +30,24 @@ const Piece: FC<Props> = ({ rank, column, piece }) => {
       e.target.style.display = "none";
     }, 0);
     // Using Timeout because otherwise the moment i grab de piece it becomes instantly invisible
+
+    if (turn === piece[0]) {
+      const candidateMoves: [number, number][] = arbiter.getRegularMoves({
+        position: currentPosition[currentPosition.length - 1],
+        piece,
+        rank,
+        column,
+      });
+
+      if (candidateMoves && candidateMoves.length > 0) {
+        console.log(candidateMoves);
+        dispatch(generateCandidateMoves({ candidateMoves }));
+      }
+    }
+  };
+
+  const onDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+    (e.target as HTMLDivElement).style.display = "block";
   };
 
   return (
@@ -30,6 +55,7 @@ const Piece: FC<Props> = ({ rank, column, piece }) => {
       className={`piece ${piece} p-${rank}${column}`}
       draggable={true}
       onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
     >
       {piece === "white-rook" && <FaChessRook className="white-piece" />}
       {piece === "black-rook" && <FaChessRook className="black-piece" />}
